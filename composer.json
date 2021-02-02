@@ -3,9 +3,23 @@
     "description": "Hexlet Project2",
     "license": "proprietary",
     "bin": [
-	"bin/gendiff",
+	"bin/gendiff"
     ],
+    "autoload": {
+	"files": [
+	    "src/Differ.php"
+	]
+    },
     "require": {
-        "docopt/docopt": "^1.0"
+        "docopt/docopt": "^1.0",
+        "funct/funct": "^1.5"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^0.12.70"
+    },
+    "scripts": {
+	"phpcs": "vendor/bin/phpcs"
     }
 }

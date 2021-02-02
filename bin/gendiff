@@ -2,6 +2,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+use function Differ\Differ\genDiff;
 
 $doc = <<<'DOCOPT'
 
@@ -21,4 +22,5 @@ DOCOPT;
 
 
 $res = Docopt::handle($doc);
+echo genDiff($res['<firstFile>'],$res['<secondFile>'])."\n";
 ?>
