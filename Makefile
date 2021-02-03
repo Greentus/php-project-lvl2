@@ -11,12 +11,12 @@ autoload:
 	composer -o dump-autoload
 
 lint:
-	composer run-script phpcs -- --standard=PSR12 src bin
+	composer run-script phpcs -- --standard=PSR12 src bin tests
 stan:
-	composer exec --verbose phpstan -- --level=8 analyse src bin
+	composer exec --verbose phpstan -- --level=8 analyse src bin tests
 
 lint-fix:
-	composer exec --verbose phpcbf -- --standard=PSR12 src bin
+	composer exec --verbose phpcbf -- --standard=PSR12 src bin tests
 
 test:
 	composer exec --verbose phpunit tests

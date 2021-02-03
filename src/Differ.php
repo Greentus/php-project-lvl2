@@ -3,6 +3,7 @@
 namespace Differ\Differ;
 
 use function Funct\Collection\sortBy;
+use function Differ\Parsers\parse;
 
 function genDiff(string $path1, string $path2): string
 {
@@ -20,24 +21,24 @@ function genDiff(string $path1, string $path2): string
     if ($file2 === false) {
         return "{\n  Error: file '{$path2}' read failed.\n}";
     }
-    $arr1 = json_decode($file1, true);
+    $arr1 = parse(substr($path1, strrpos($path1, '.') + 1), $file1);
     if ($arr1 == null) {
-        return "{\n  Error: json_decode file '{$path1}' fail " . json_last_error_msg() . "\n}";
+        return "{\n  Error: parse file '{$path1}' fail.\n}";
     }
-    $arr2 = json_decode($file2, true);
+    $arr2 = parse(substr($path2, strrpos($path2, '.') + 1), $file2);
     if ($arr2 == null) {
-        return "{\n  Error: json_decode file '{$path2}' fail " . json_last_error_msg() . "\n}";
+        return "{\n  Error: parse file '{$path2}' fail.\n}";
     }
     $res = [];
-    foreach ($arr1 as $key => $value) {
-        if (array_key_exists($key, $arr2)) {
-            $res[] = ['key' => $key,'value' => var_export($value, true), 'new' => var_export($arr2[$key], true)];
+    foreach ((array) $arr1 as $key => $value) {
+        if (isset($arr2->$key)) {
+            $res[] = ['key' => $key,'value' => var_export($value, true), 'new' => var_export($arr2->$key, true)];
         } else {
             $res[] = ['key' => $key,'value' => var_export($value, true)];
         }
     }
-    foreach ($arr2 as $key => $value) {
-        if (!array_key_exists($key, $arr1)) {
+    foreach ((array) $arr2 as $key => $value) {
+        if (!isset($arr1->$key)) {
             $res[] = ['key' => $key,'new' => var_export($value, true)];
         }
     }
