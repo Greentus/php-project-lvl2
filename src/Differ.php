@@ -57,6 +57,6 @@ function genDiff(string $path1, string $path2): string
         }
         return $acc;
     }, []);
-    $res=implode("\n ", $res);
+    $res = implode("\n ", $res);
     return "{\n {$res}\n}";
 }
