@@ -8,6 +8,7 @@
     "autoload": {
 	"files": [
 	    "src/Differ.php",
+	    "src/Formatters.php",
 	    "src/Parsers.php"
 	]
     },

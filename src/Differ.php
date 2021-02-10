@@ -2,10 +2,11 @@
 
 namespace Differ\Differ;
 
-use function Funct\Collection\sortBy;
-use function Differ\Parsers\parse;
+use function Differ\Parsers\parseFile;
+use function Differ\Parsers\makeDiff;
+use function Differ\Formatters\genStylish;
 
-function genDiff(string $path1, string $path2): string
+function genDiff(string $path1, string $path2, string $format = 'stylish'): string
 {
     if (!file_exists($path1)) {
         return "{\n  Error: file '{$path1}' not found.\n}";
@@ -21,43 +22,19 @@ function genDiff(string $path1, string $path2): string
     if ($file2 === false) {
         return "{\n  Error: file '{$path2}' read failed.\n}";
     }
-    $arr1 = parse(substr($path1, strrpos($path1, '.') + 1), $file1);
+    $arr1 = parseFile(substr($path1, strrpos($path1, '.') + 1), $file1);
     if ($arr1 == null) {
         return "{\n  Error: parse file '{$path1}' fail.\n}";
     }
-    $arr2 = parse(substr($path2, strrpos($path2, '.') + 1), $file2);
+    $arr2 = parseFile(substr($path2, strrpos($path2, '.') + 1), $file2);
     if ($arr2 == null) {
         return "{\n  Error: parse file '{$path2}' fail.\n}";
     }
-    $res = [];
-    foreach ((array) $arr1 as $key => $value) {
-        if (isset($arr2->$key)) {
-            $res[] = ['key' => $key,'value' => var_export($value, true), 'new' => var_export($arr2->$key, true)];
-        } else {
-            $res[] = ['key' => $key,'value' => var_export($value, true)];
-        }
+    $diff = makeDiff($arr1, $arr2);
+    if ($format == 'stylish') {
+        $res = genStylish($diff);
+    } else {
+        return "{\n  Error: invalid format '{$format}'.\n}";
     }
-    foreach ((array) $arr2 as $key => $value) {
-        if (!isset($arr1->$key)) {
-            $res[] = ['key' => $key,'new' => var_export($value, true)];
-        }
-    }
-    $res = sortBy($res, fn($elem)=>$elem['key']);
-    $res = array_reduce($res, function ($acc, $elem) {
-        if (isset($elem['value']) && isset($elem['new'])) {
-            if ($elem['value'] == $elem['new']) {
-                $acc[] = "  {$elem['key']}: {$elem['value']}";
-            } else {
-                $acc[] = "- {$elem['key']}: {$elem['value']}";
-                $acc[] = "+ {$elem['key']}: {$elem['new']}";
-            }
-        } elseif (isset($elem['value'])) {
-            $acc[] = "- {$elem['key']}: {$elem['value']}";
-        } else {
-            $acc[] = "+ {$elem['key']}: {$elem['new']}";
-        }
-        return $acc;
-    }, []);
-    $res = implode("\n ", $res);
-    return "{\n {$res}\n}";
+    return $res;
 }
