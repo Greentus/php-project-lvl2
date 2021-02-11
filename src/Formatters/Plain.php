@@ -42,14 +42,12 @@ function genPlainElem(array $elem, string $parent = ''): string
     $parent .= empty($parent) ? '' : '.';
     switch ($elem['status']) {
         case ST_OLD:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was removed' . PHP_EOL;
+            return $res = 'Property \'' . $parent . $elem['key'] . '\' was removed';
         case ST_NEW:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: '
-                          . $new . PHP_EOL;
+            return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: ' . $new;
         case ST_CHANGE:
-            if ($parent . $elem['key'] == 'group4.type') var_dump($elem);
             return $res = 'Property \'' . $parent . $elem['key'] . '\' was updated. From '
-                          . $old . ' to ' . $new . PHP_EOL;
+                          . $old . ' to ' . $new;
         case ST_KEEP:
         default:
             return '';
@@ -66,10 +64,16 @@ function genPlain(array $childs, string $parent = ''): string
     }
     foreach ($arr as $elem) {
         if (isset($elem['child'])) {
-            $res[] = genPlain($elem, $parent . (empty($parent) ? '' : '.') . $elem['key']);
+            $str = genPlain($elem, $parent . (empty($parent) ? '' : '.') . $elem['key']);
+            if (!empty($str)) {
+                $res[] = $str;
+            }
         } else {
-            $res[] = genPlainElem($elem, $parent);
+            $str = genPlainElem($elem, $parent);
+            if (!empty($str)) {
+                $res[] = $str;
+            }
         }
     }
-    return implode('', $res);
+    return implode(PHP_EOL, $res);
 }
