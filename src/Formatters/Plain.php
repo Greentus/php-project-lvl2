@@ -47,6 +47,7 @@ function genPlainElem(array $elem, string $parent = ''): string
             return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: '
                           . $new . PHP_EOL;
         case ST_CHANGE:
+            if ($parent . $elem['key'] == 'group4.type') var_dump($elem);
             return $res = 'Property \'' . $parent . $elem['key'] . '\' was updated. From '
                           . $old . ' to ' . $new . PHP_EOL;
         case ST_KEEP:
