@@ -44,9 +44,11 @@ function genPlainElem(array $elem, string $parent = ''): string
         case ST_OLD:
             return $res = 'Property \'' . $parent . $elem['key'] . '\' was removed' . PHP_EOL;
         case ST_NEW:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: ' . $new . PHP_EOL;
+            return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: '
+                          . $new . PHP_EOL;
         case ST_CHANGE:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was updated. From ' . $old . ' to ' . $new . PHP_EOL;
+            return $res = 'Property \'' . $parent . $elem['key'] . '\' was updated. From '
+                          . $old . ' to ' . $new . PHP_EOL;
         case ST_KEEP:
         default:
             return '';
