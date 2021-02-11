@@ -9,10 +9,11 @@ const ST_NEW = 2;
 const ST_OLD = 3;
 const ST_CHANGE = 4;
 const ST_TEXT = [ST_KEEP => ' ',ST_NEW => '+',ST_OLD => '-'];
+const EXT_YAML = ['yml' , 'yaml'];
 
 function parseFile(string $ext, string $content): object
 {
-    if ($ext == 'yml') {
+    if (in_array($ext, EXT_YAML)) {
         return Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
     }
     return json_decode($content);
