@@ -18,6 +18,9 @@ function toString($value): string
     if (is_object($value)) {
         return '[complex value]';
     }
+    if (is_string($value)) {
+        return "'{$value}'";
+    }
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
     }
