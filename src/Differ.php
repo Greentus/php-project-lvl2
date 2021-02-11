@@ -4,37 +4,35 @@ namespace Differ\Differ;
 
 use function Differ\Parsers\parseFile;
 use function Differ\Parsers\makeDiff;
-use function Differ\Formatters\genStylish;
+use function Differ\Formatters\formatDiff;
 
-function genDiff(string $path1, string $path2, string $format = 'stylish'): string
+use const Differ\Formatters\FM_STYLISH;
+
+function genDiff(string $path1, string $path2, string $format = FM_STYLISH): string
 {
     if (!file_exists($path1)) {
-        return "{\n  Error: file '{$path1}' not found.\n}";
+        return "Error: file '{$path1}' not found.";
     }
     $file1 = file_get_contents($path1);
     if ($file1 === false) {
-        return "{\n  Error: file '{$path1}' read failed.\n}";
+        return "Error: file '{$path1}' read failed.";
     }
     if (!file_exists($path2)) {
-        return "{\n  Error: file '{$path2}' not found.\n}";
+        return "Error: file '{$path2}' not found.";
     }
     $file2 = file_get_contents($path2);
     if ($file2 === false) {
-        return "{\n  Error: file '{$path2}' read failed.\n}";
+        return "Error: file '{$path2}' read failed.";
     }
     $arr1 = parseFile(substr($path1, strrpos($path1, '.') + 1), $file1);
     if ($arr1 == null) {
-        return "{\n  Error: parse file '{$path1}' fail.\n}";
+        return "Error: parse file '{$path1}' fail.";
     }
     $arr2 = parseFile(substr($path2, strrpos($path2, '.') + 1), $file2);
     if ($arr2 == null) {
-        return "{\n  Error: parse file '{$path2}' fail.\n}";
+        return "Error: parse file '{$path2}' fail.";
     }
     $diff = makeDiff($arr1, $arr2);
-    if ($format == 'stylish') {
-        $res = genStylish($diff);
-    } else {
-        return "{\n  Error: invalid format '{$format}'.\n}";
-    }
+    $res = formatDiff($diff, $format);
     return $res;
 }

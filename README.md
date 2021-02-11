@@ -5,3 +5,4 @@
 [![Step 3](https://asciinema.org/a/WqmJHEa86TO55CcSZFb9Dmpbk.png)](https://asciinema.org/a/WqmJHEa86TO55CcSZFb9Dmpbk)
 [![Step 5](https://asciinema.org/a/9zFhNGGgAiY9yr1Y9vKsPsXAs.png)](https://asciinema.org/a/9zFhNGGgAiY9yr1Y9vKsPsXAs)
 [![Step 6](https://asciinema.org/a/1zIX1URMfGlpa5LpkCCOrG7vZ.png)](https://asciinema.org/a/1zIX1URMfGlpa5LpkCCOrG7vZ)
+[![Step 7](https://asciinema.org/a/75dvTG9uHxXYxHfFvqvj4PKjM.png)](https://asciinema.org/a/75dvTG9uHxXYxHfFvqvj4PKjM)
