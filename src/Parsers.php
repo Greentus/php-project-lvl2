@@ -23,7 +23,7 @@ function compareChilds(array &$arr): void
     usort($arr, fn($a, $b)=>$a['key'] <=> $b['key']);
     foreach ($arr as $key => $elem) {
         if (array_key_exists('new', $elem) && array_key_exists('old', $elem)) {
-            if ($elem['new'] == $elem['old']) {
+            if ($elem['new'] === $elem['old']) {
                 $arr[$key]['status'] = ST_KEEP;
             } else {
                 $arr[$key]['status'] = ST_CHANGE;
