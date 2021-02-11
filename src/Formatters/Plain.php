@@ -19,7 +19,7 @@ function toString($value): string
         return '[complex value]';
     }
     if (is_string($value)) {
-        return "'{$value}'";
+        return "'" . $value . "'";
     }
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
