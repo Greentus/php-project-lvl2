@@ -6,8 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
 
-use const Differ\Formatters\FM_STYLISH;
+use const Differ\Formatters\FM_JSON;
 use const Differ\Formatters\FM_PLAIN;
+use const Differ\Formatters\FM_STYLISH;
 
 class DifferTest extends TestCase
 {
@@ -57,5 +58,21 @@ class DifferTest extends TestCase
         $file2 = 'tests/fixtures/step6/file2.yml';
         $diff = genDiff($file1, $file2, FM_PLAIN);
         $this->assertStringEqualsFile('tests/fixtures/step7/res.diff', $diff);
+    }
+
+    public function testCompareJsonRecursiveJson(): void
+    {
+        $file1 = 'tests/fixtures/step6/file1.json';
+        $file2 = 'tests/fixtures/step6/file2.json';
+        $diff = genDiff($file1, $file2, FM_PLAIN);
+        $this->assertStringEqualsFile('tests/fixtures/step7/res.diff', $diff);
+    }
+
+    public function testCompareYamlRecursiveJson(): void
+    {
+        $file1 = 'tests/fixtures/step6/file1.yml';
+        $file2 = 'tests/fixtures/step6/file2.yml';
+        $diff = genDiff($file1, $file2, FM_JSON);
+        $this->assertStringEqualsFile('tests/fixtures/step8/res.diff', $diff);
     }
 }
