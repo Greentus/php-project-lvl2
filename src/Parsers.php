@@ -25,15 +25,17 @@ function makeDiff(object $arr1, object $arr2): array
 {
     $keys = array_unique(array_merge(array_keys(get_object_vars($arr1)), array_keys(get_object_vars($arr2))));
 
-    $diff = array_reduce($keys, function ($acc, $key) use ($arr1, $arr2) {
+    $diff = array_reduce($keys, function ($acc, $key) use ($arr1, $arr2): array {
         if (property_exists($arr1, $key) && property_exists($arr2, $key)) {
             if (is_object($arr1->$key) && is_object($arr2->$key)) {
                 return array_merge($acc, [['key' => $key, 'child' => makeDiff($arr1->$key, $arr2->$key)]]);
             } else {
                 if ($arr1->$key === $arr2->$key) {
-                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,'new' => $arr2->$key, 'status' => ST_KEEP]]);
+                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,
+                           'new' => $arr2->$key, 'status' => ST_KEEP]]);
                 } else {
-                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,'new' => $arr2->$key, 'status' => ST_CHANGE]]);
+                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,
+                           'new' => $arr2->$key, 'status' => ST_CHANGE]]);
                 }
             }
         } else {

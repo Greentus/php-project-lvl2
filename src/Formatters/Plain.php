@@ -57,9 +57,9 @@ function genPlainElem(array $elem, string $parent = ''): string
 
 function genPlain(array $childs, string $parent = ''): string
 {
-    $res = array_reduce($parent == '' ? $childs : $childs['child'], function ($acc, $elem) use ($parent) {
+    $res = array_reduce($parent == '' ? $childs : $childs['child'], function ($acc, $elem) use ($parent): array {
         if (isset($elem['child'])) {
-            return array_merge($acc, [genPlain($elem, $parent . (empty($parent) ? '' : '.') . $elem['key'])]);
+            return array_merge($acc, [genPlain($elem, $parent . ($parent == '' ? '' : '.') . $elem['key'])]);
         } else {
             return array_merge($acc, [genPlainElem($elem, $parent)]);
         }

@@ -30,7 +30,7 @@ function toString($value): string
 function genStylishObject(string $objKey, object $objElem, int $lvl = 0, bool $st = false): string
 {
     $keys = array_keys(get_object_vars($objElem));
-    $res = array_reduce($keys, function ($acc, $key) use ($objElem, $lvl) {
+    $res = array_reduce($keys, function ($acc, $key) use ($objElem, $lvl): array {
         if (is_object($objElem->$key)) {
             return array_merge($acc, [genStylishObject($key, $objElem->$key, $lvl + 1)]);
         } else {
@@ -79,7 +79,7 @@ function genStylishElem(array $elem, int $lvl = 0): string
 
 function genStylish(array $childs, int $lvl = 0): string
 {
-    $res = array_reduce($lvl == 0 ? $childs : $childs['child'], function ($acc, $elem) use ($lvl) {
+    $res = array_reduce($lvl == 0 ? $childs : $childs['child'], function ($acc, $elem) use ($lvl): array {
         if (isset($elem['child'])) {
             return array_merge($acc, [genStylish($elem, $lvl + 1)]);
         } else {
