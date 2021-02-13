@@ -4,6 +4,8 @@ namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
+use function Funct\Collection\sortBy;
+
 const ST_KEEP = 1;
 const ST_NEW = 2;
 const ST_OLD = 3;
@@ -13,53 +15,34 @@ const EXT_YAML = ['yml' , 'yaml'];
 
 function parseFile(string $ext, string $content): object
 {
-    if (in_array($ext, EXT_YAML)) {
+    if (in_array($ext, EXT_YAML, true)) {
         return Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
     }
     return json_decode($content);
 }
 
-function compareChilds(array &$arr): void
-{
-    usort($arr, fn($a, $b)=>$a['key'] <=> $b['key']);
-    foreach ($arr as $key => $elem) {
-        if (array_key_exists('new', $elem) && array_key_exists('old', $elem)) {
-            if ($elem['new'] === $elem['old']) {
-                $arr[$key]['status'] = ST_KEEP;
-            } else {
-                $arr[$key]['status'] = ST_CHANGE;
-            }
-        } else {
-            if (array_key_exists('new', $elem)) {
-                $arr[$key]['status'] = ST_NEW;
-            } elseif (array_key_exists('old', $elem)) {
-                $arr[$key]['status'] = ST_OLD;
-            } elseif (array_key_exists('child', $elem)) {
-                    compareChilds($arr[$key]['child']);
-            }
-        }
-    }
-}
-
 function makeDiff(object $arr1, object $arr2): array
 {
-    $diff = [];
-    foreach ($arr1 as $key => $value) {
-        if (property_exists($arr2, $key)) {
-            if (is_object($value) && is_object($arr2->$key)) {
-                $diff[] = ['key' => $key,'child' => makeDiff($value, $arr2->$key)];
+    $keys = array_unique(array_merge(array_keys(get_object_vars($arr1)), array_keys(get_object_vars($arr2))));
+
+    $diff = array_reduce($keys, function ($acc, $key) use ($arr1, $arr2) {
+        if (property_exists($arr1, $key) && property_exists($arr2, $key)) {
+            if (is_object($arr1->$key) && is_object($arr2->$key)) {
+                return array_merge($acc, [['key' => $key, 'child' => makeDiff($arr1->$key, $arr2->$key)]]);
             } else {
-                $diff[] = ['key' => $key,'old' => $value,'new' => $arr2->$key];
+                if ($arr1->$key === $arr2->$key) {
+                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,'new' => $arr2->$key, 'status' => ST_KEEP]]);
+                } else {
+                    return array_merge($acc, [['key' => $key, 'old' => $arr1->$key,'new' => $arr2->$key, 'status' => ST_CHANGE]]);
+                }
             }
         } else {
-            $diff[] = ['key' => $key,'old' => $value];
+            if (property_exists($arr1, $key)) {
+                return array_merge($acc, [['key' => $key, 'old' => $arr1->$key, 'status' => ST_OLD]]);
+            } else {
+                return array_merge($acc, [['key' => $key, 'new' => $arr2->$key, 'status' => ST_NEW]]);
+            }
         }
-    }
-    foreach ($arr2 as $key => $value) {
-        if (!property_exists($arr1, $key)) {
-            $diff[] = ['key' => $key,'new' => $value];
-        }
-    }
-    compareChilds($diff);
-    return $diff;
+    }, []);
+    return sortBy($diff, fn($elem)=>$elem['key']);
 }

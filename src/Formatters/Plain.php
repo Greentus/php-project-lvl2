@@ -39,15 +39,16 @@ function genPlainElem(array $elem, string $parent = ''): string
     } else {
         $new = '';
     }
-    $parent .= empty($parent) ? '' : '.';
     switch ($elem['status']) {
         case ST_OLD:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was removed';
+            return  'Property \'' . $parent . ($parent == '' ? '' : '.') . $elem['key'] .
+            '\' was removed';
         case ST_NEW:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was added with value: ' . $new;
+            return 'Property \'' . $parent . ($parent == '' ? '' : '.') . $elem['key'] .
+           '\' was added with value: ' . $new;
         case ST_CHANGE:
-            return $res = 'Property \'' . $parent . $elem['key'] . '\' was updated. From '
-                          . $old . ' to ' . $new;
+            return 'Property \'' . $parent . ($parent == '' ? '' : '.') . $elem['key'] .
+           '\' was updated. From '  . $old . ' to ' . $new;
         case ST_KEEP:
         default:
             return '';
@@ -56,24 +57,12 @@ function genPlainElem(array $elem, string $parent = ''): string
 
 function genPlain(array $childs, string $parent = ''): string
 {
-    $res = [];
-    if ($parent == '') {
-        $arr = $childs;
-    } else {
-        $arr = $childs['child'];
-    }
-    foreach ($arr as $elem) {
+    $res = array_reduce($parent == '' ? $childs : $childs['child'], function ($acc, $elem) use ($parent) {
         if (isset($elem['child'])) {
-            $str = genPlain($elem, $parent . (empty($parent) ? '' : '.') . $elem['key']);
-            if (!empty($str)) {
-                $res[] = $str;
-            }
+            return array_merge($acc, [genPlain($elem, $parent . (empty($parent) ? '' : '.') . $elem['key'])]);
         } else {
-            $str = genPlainElem($elem, $parent);
-            if (!empty($str)) {
-                $res[] = $str;
-            }
+            return array_merge($acc, [genPlainElem($elem, $parent)]);
         }
-    }
-    return implode(PHP_EOL, $res);
+    }, []);
+    return implode(PHP_EOL, array_filter($res, fn($elem)=>$elem != ''));
 }

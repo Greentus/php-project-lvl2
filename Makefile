@@ -13,7 +13,7 @@ autoload:
 lint:
 	composer run-script phpcs -- --standard=PSR12 src bin tests
 stan:
-	composer exec --verbose phpstan -- analyse src bin tests
+	composer exec -v phpstan analyse -- -c ./phpstan.neon --ansi
 
 lint-fix:
 	composer exec --verbose phpcbf -- --standard=PSR12 src bin tests

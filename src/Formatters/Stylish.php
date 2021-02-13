@@ -29,21 +29,17 @@ function toString($value): string
 
 function genStylishObject(string $objKey, object $objElem, int $lvl = 0, bool $st = false): string
 {
-    $res = [];
-    if ($st) {
-        $res[] = '{';
-    } else {
-        $res[] = str_repeat(INDENT, ($lvl - 1) * 2) . $objKey . ': {';
-    }
-    foreach ($objElem as $key => $elem) {
-        if (is_object($elem)) {
-            $res[] = genStylishObject($key, $elem, $lvl + 1);
+    $keys = array_keys(get_object_vars($objElem));
+    $res = array_reduce($keys, function ($acc, $key) use ($objElem, $lvl) {
+        if (is_object($objElem->$key)) {
+            return array_merge($acc, [genStylishObject($key, $objElem->$key, $lvl + 1)]);
         } else {
-            $res[] = str_repeat(INDENT, $lvl * 2) . $key . ': ' . toString($elem);
+            return array_merge($acc, [str_repeat(INDENT, $lvl * 2) . $key . ': ' . toString($objElem->$key)]);
         }
-    }
-    $res[] = str_repeat(INDENT, ($lvl - 1) * 2) . '}';
-    return implode(PHP_EOL, $res);
+    }, []);
+    return ($st ? '{' : str_repeat(INDENT, ($lvl - 1) * 2) . $objKey . ': {') . PHP_EOL .
+       implode(PHP_EOL, $res) . PHP_EOL .
+       str_repeat(INDENT, ($lvl - 1) * 2) . '}';
 }
 
 function genStylishElem(array $elem, int $lvl = 0): string
@@ -69,41 +65,29 @@ function genStylishElem(array $elem, int $lvl = 0): string
     }
     switch ($elem['status']) {
         case ST_OLD:
-            return $res .= ST_TEXT[$elem['status']] . ' ' . $elem['key'] . ': ' . $old;
+            return $res . ST_TEXT[$elem['status']] . ' ' . $elem['key'] . ': ' . $old;
         case ST_NEW:
-            return $res .= ST_TEXT[$elem['status']] . ' ' . $elem['key'] . ': ' . $new;
+            return $res . ST_TEXT[$elem['status']] . ' ' . $elem['key'] . ': ' . $new;
         case ST_CHANGE:
-            return $res .= ST_TEXT[ST_OLD] . ' ' . $elem['key'] . ': ' . $old . PHP_EOL .
+            return $res . ST_TEXT[ST_OLD] . ' ' . $elem['key'] . ': ' . $old . PHP_EOL .
                    str_repeat(INDENT, $lvl * 2 - 1) . ST_TEXT[ST_NEW] . ' ' . $elem['key'] . ': ' . $new;
         case ST_KEEP:
         default:
-            return $res .= ST_TEXT[ST_KEEP] . ' ' . $elem['key'] . ': ' . $old ?? $new;
+            return $res . ST_TEXT[ST_KEEP] . ' ' . $elem['key'] . ': ' . $old ?? $new;
     }
 }
 
 function genStylish(array $childs, int $lvl = 0): string
 {
-    $res = [];
-    if ($lvl == 0) {
-        $res[] = '{';
-        $arr = $childs;
-    } else {
-        $res[] = str_repeat(INDENT, ($lvl - 1) * 2 + 1)
-                 . ST_TEXT[$childs['status'] ?? ST_KEEP]
-                 . ' ' . $childs['key'] . ': {';
-        $arr = $childs['child'];
-    }
-    foreach ($arr as $elem) {
+    $res = array_reduce($lvl == 0 ? $childs : $childs['child'], function ($acc, $elem) use ($lvl) {
         if (isset($elem['child'])) {
-            $res[] = genStylish($elem, $lvl + 1);
+            return array_merge($acc, [genStylish($elem, $lvl + 1)]);
         } else {
-            $res[] = genStylishElem($elem, $lvl + 1);
+            return array_merge($acc, [genStylishElem($elem, $lvl + 1)]);
         }
-    }
-    if ($lvl == 0) {
-        $res[] = '}';
-    } else {
-        $res[] = str_repeat(INDENT, $lvl * 2) . '}';
-    }
-    return implode(PHP_EOL, $res);
+    }, []);
+    return ($lvl == 0 ? '{' : str_repeat(INDENT, ($lvl - 1) * 2 + 1) .
+       ST_TEXT[$childs['status'] ?? ST_KEEP] . ' ' . $childs['key'] . ': {') . PHP_EOL .
+       implode(PHP_EOL, $res) . PHP_EOL .
+       ($lvl == 0 ?  '}' :  str_repeat(INDENT, $lvl * 2) . '}');
 }

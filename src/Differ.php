@@ -24,11 +24,11 @@ function genDiff(string $path1, string $path2, string $format = FM_STYLISH): str
     if ($file2 === false) {
         return "Error: file '{$path2}' read failed.";
     }
-    $arr1 = parseFile(substr($path1, strrpos($path1, '.') + 1), $file1);
+    $arr1 = parseFile(pathinfo($path1, PATHINFO_EXTENSION), $file1);
     if ($arr1 == null) {
         return "Error: parse file '{$path1}' fail.";
     }
-    $arr2 = parseFile(substr($path2, strrpos($path2, '.') + 1), $file2);
+    $arr2 = parseFile(pathinfo($path2, PATHINFO_EXTENSION), $file2);
     if ($arr2 == null) {
         return "Error: parse file '{$path2}' fail.";
     }

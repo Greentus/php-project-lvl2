@@ -1,45 +1,45 @@
 [
     {
         "key": "common",
-        "child": [
-            {
+        "child": {
+            "4": {
                 "key": "follow",
                 "new": false,
                 "status": 2
             },
-            {
+            "0": {
                 "key": "setting1",
                 "old": "Value 1",
                 "new": "Value 1",
                 "status": 1
             },
-            {
+            "1": {
                 "key": "setting2",
                 "old": 200,
                 "status": 3
             },
-            {
+            "2": {
                 "key": "setting3",
                 "old": true,
                 "new": null,
                 "status": 4
             },
-            {
+            "5": {
                 "key": "setting4",
                 "new": "blah blah",
                 "status": 2
             },
-            {
+            "6": {
                 "key": "setting5",
                 "new": {
                     "key5": "value5"
                 },
                 "status": 2
             },
-            {
+            "3": {
                 "key": "setting6",
-                "child": [
-                    {
+                "child": {
+                    "1": {
                         "key": "doge",
                         "child": [
                             {
@@ -50,20 +50,20 @@
                             }
                         ]
                     },
-                    {
+                    "0": {
                         "key": "key",
                         "old": "value",
                         "new": "value",
                         "status": 1
                     },
-                    {
+                    "2": {
                         "key": "ops",
                         "new": "vops",
                         "status": 2
                     }
-                ]
+                }
             }
-        ]
+        }
     },
     {
         "key": "group1",
